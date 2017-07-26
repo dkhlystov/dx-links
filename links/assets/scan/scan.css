@@ -1,0 +1,13 @@
+.scan-caption-block {
+	height: 20px;
+	position: relative;
+}
+.scan-caption-block > div {
+	max-width: 100%;
+	overflow: hidden;
+	position: absolute;
+	white-space: nowrap;
+}
+.scan-addition {
+	cursor: pointer;
+}
