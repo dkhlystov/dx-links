@@ -43,4 +43,9 @@ class Url extends ActiveRecord
 		return $this->hasMany(Url::className(), ['id' => 'dest_id'])->viaTable('link_url_rel', ['src_id' => 'id']);
 	}
 
+	public function getConfirmity($domain_id = null)
+	{
+		return $this->hasOne(Url::className(), ['id' => 'dest_id'])->viaTable('link_url_confirmity', ['src_id' => 'id'])->andWhere(['domain_id' => $domain_id]);
+	}
+
 }

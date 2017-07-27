@@ -24,6 +24,7 @@ create table if not exists `link_url`
 	`id` int(10) not null auto_increment,
 	`domain_id` int(10) not null,
 	`url` varchar(500) not null,
+	`depth` int(10) default null,
 	`status` int(10) default null,
 	`lastModified` datetime default null,
 	`expires` datetime default null,
@@ -46,4 +47,17 @@ create table if not exists `link_url_rel`
 	primary key (`id`),
 	foreign key (`src_id`) references `link_url` (`id`) on delete cascade on update cascade,
 	foreign key (`dest_id`) references `link_url` (`id`) on delete cascade on update cascade
+) engine InnoDB;
+
+create table if not exists `link_url_confirmity`
+(
+	`id` int(10) not null auto_increment,
+	`src_id` int(10) not null,
+	`domain_id` int(10) not null,
+	`dest_id` int(10) not null,
+	primary key (`id`),
+	foreign key (`src_id`) references `link_url` (`id`) on delete cascade on update cascade,
+	foreign key (`domain_id`) references `link_domain` (`id`) on delete cascade on update cascade,
+	foreign key (`dest_id`) references `link_url` (`id`) on delete cascade on update cascade,
+	unique `url` (`src_id`, `domain_id`)
 ) engine InnoDB;

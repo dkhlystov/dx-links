@@ -43,7 +43,7 @@ $summary = Yii::t('yii', 'Total <b>{count, number}</b> {count, plural, one{item}
 			'attribute' => 'url',
 			'content' => function($model, $key, $index, $column) {
 				//url address
-				$url = Html::encode($model->url);
+				$url = Html::encode(urldecode($model->url));
 
 				$addition = '';
 

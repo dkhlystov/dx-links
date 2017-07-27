@@ -14,8 +14,29 @@ $this->params['breadcrumbs'] = [
 
 DomainAsset::register($this);
 
+$dataProvider = $search->getDataProvider();
+$query = clone $dataProvider->query;
+
+$domains = ['' => ''];
+foreach ($query->asArray()->all() as $row)
+	$domains[$row['id']] = $row['host']
+
 ?>
 <h1><?= Html::encode($title) ?></h1>
+
+<?php ActiveForm::begin([
+	'action' => ['conformity'],
+	'method' => 'get',
+	'layout' => 'inline',
+	'enableClientValidation' => false,
+]); ?>
+	<p>
+		<?= Html::dropDownList('src_id', null, $domains, ['class' => 'form-control']) ?> -&gt; 
+		<?= Html::dropDownList('dest_id', null, $domains, ['class' => 'form-control']) ?>
+		<?= Html::submitButton('Соответствие', ['class' => 'btn btn-primary']) ?>
+	</p>
+<?php ActiveForm::end(); ?>
+
 
 <?php ActiveForm::begin([
 	'layout' => 'inline',
@@ -29,7 +50,7 @@ DomainAsset::register($this);
 <?php ActiveForm::end(); ?>
 
 <?= GridView::widget([
-	'dataProvider' => $search->getDataProvider(),
+	'dataProvider' => $dataProvider,
 	'tableOptions' => ['class' => 'table table-bordered'],
 	'columns' => [
 		[

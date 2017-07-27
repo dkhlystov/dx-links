@@ -15,7 +15,7 @@ class UrlParser
 	 * @param Url $url 
 	 * @return Url[]
 	 */
-	public static function scan(Url $url)
+	public static function scan(Url $url, $maxDepth = 5)
 	{
 		$domain = $url->domain;
 
@@ -76,7 +76,9 @@ class UrlParser
 					$u .= '?' . $query;
 
 				$domains[$d] = ['scheme' => $scheme, 'host' => $host];
-				$items[] = ['d' => $d, 'u' => $u];
+
+				if (mb_strlen($u) < 500)
+					$items[] = ['d' => $d, 'u' => $u];
 			}
 
 			//prepare domains
@@ -97,23 +99,32 @@ class UrlParser
 			}
 
 			//create urls
-			foreach ($items as $item) {
-				if (!array_key_exists($item['d'], $domains))
-					continue;
+			if ($url->depth < $maxDepth) {
+				$depth = $url->depth + 1;
+				foreach ($items as $item) {
+					if (!array_key_exists($item['d'], $domains))
+						continue;
 
-				$domain = $domains[$item['d']];
+					$domain = $domains[$item['d']];
 
-				//determine url
-				$u = Url::find()->where(['domain_id' => $domain->id, 'url' => $item['u']])->one();
-				if ($u === null) {
-					$u = new Url(['url' => $item['u']]);
-					$domain->link('urls', $u);
-					if ($u->domain_id == $url->domain_id)
-						$urls[] = $u;
+					//determine url
+					$u = Url::find()->where(['domain_id' => $domain->id, 'url' => $item['u']])->one();
+					if ($u === null) {
+						$u = new Url(['url' => $item['u'], 'depth' => $depth]);
+						$domain->link('urls', $u);
+
+						if ($u->domain_id == $url->domain_id)
+							$urls[] = $u;
+					} else {
+						if ($url->domain_id == $u->domain_id && ($u->depth === null || $u->depth > $depth)) {
+							$u->depth = $depth;
+							$u->update(false, ['depth']);
+						}
+					}
+
+					//link to origin
+					$url->link('dest', $u);
 				}
-
-				//link to origin
-				$url->link('dest', $u);
 			}
 		}
 
@@ -262,6 +273,8 @@ class UrlParser
 
 		preg_match_all('/<a[^>]+href=(?:"(.*?)"|\'(.*?)\')/i', $content, $matches);
 		foreach ($matches[1] as $value) {
+			$value = str_replace('&amp;', '&', $value);
+
 			//anchor
 			if (mb_strpos($value, '#') === 0)
 				continue;

@@ -71,7 +71,7 @@ class DomainController extends Controller
 		$dataProvider = new ActiveDataProvider([
 			'query' => $object->getUrls(),
 			'key' => 'id',
-			'pagination' => false,
+			// 'pagination' => false,
 		]);
 
 		return $this->render('scan', ['domain' => $object, 'dataProvider' => $dataProvider]);
@@ -121,6 +121,46 @@ class DomainController extends Controller
 			'ready' => (integer) $object->getUrls()->where(['not', ['status' => null]])->count(),
 			'total' => (integer) $total,
 			'view' => $this->renderPartial('scan/list', ['dataProvider' => $dataProvider, 'total' => $total]),
+		]);
+	}
+
+	public function actionConformity($src_id, $dest_id, $unfinished = true)
+	{
+		$src = Domain::findOne($src_id);
+		if ($src === null)
+			throw new BadRequestHttpException('Объект не найден.');
+
+		$dest = Domain::findOne($dest_id);
+		if ($dest === null)
+			throw new BadRequestHttpException('Объект не найден.');
+
+		$dataProvider = new ActiveDataProvider([
+			'query' => $src->getUrls(),
+			// 'pagination' => false,
+		]);
+
+		return $this->render('conformity', ['src' => $src, 'dest' => $dest, 'unfinished' => $unfinished, 'dataProvider' => $dataProvider]);
+	}
+
+	public function actionConformitySet($src_id, $dest_id)
+	{
+		$src = Url::findOne($src_id);
+		if ($src === null)
+			throw new BadRequestHttpException('Объект не найден.');
+
+		$dest = Url::findOne($dest_id);
+		if ($dest === null)
+			throw new BadRequestHttpException('Объект не найден.');
+
+		$old = $src->getConfirmity($dest->domain_id)->one();
+		if ($old !== null)
+			$src->unlink('confirmity', $old, true);
+
+		$src->link('confirmity', $dest, ['domain_id' => $dest->domain_id]);
+
+		return Json::encode([
+			'success' => true,
+			'html' => $this->renderPartial('conformity/item', ['model' => $dest]),
 		]);
 	}
 
