@@ -4,17 +4,17 @@ namespace dx\links\assets;
 
 use yii\web\AssetBundle;
 
-class ConfirmityAsset extends AssetBundle
+class ConformityAsset extends AssetBundle
 {
 
 	public $css = [
-		'confirmity.css',
+		'conformity.css',
 		'chosen.css',
 		'bootstrap-chosen.css',
 	];
 
 	public $js = [
-		'confirmity.js',
+		'conformity.js',
 		'chosen.jquery.js',
 	];
 
@@ -24,7 +24,7 @@ class ConfirmityAsset extends AssetBundle
 
 	public function init()
 	{
-		$this->sourcePath = __DIR__ . '/confirmity';
+		$this->sourcePath = __DIR__ . '/conformity';
 
 		parent::init();
 	}

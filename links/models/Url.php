@@ -18,7 +18,7 @@ class Url extends ActiveRecord
 
 	/**
 	 * Domain relation
-	 * @return ActiveRecordInterface
+	 * @return ActiveQueryInterface
 	 */
 	public function getDomain()
 	{
@@ -27,7 +27,7 @@ class Url extends ActiveRecord
 
 	/**
 	 * Sources relation
-	 * @return ActiveRecordInterface
+	 * @return ActiveQueryInterface
 	 */
 	public function getSrc()
 	{
@@ -36,16 +36,20 @@ class Url extends ActiveRecord
 
 	/**
 	 * Dest relation
-	 * @return ActiveRecordInterface
+	 * @return ActiveQueryInterface
 	 */
 	public function getDest()
 	{
 		return $this->hasMany(Url::className(), ['id' => 'dest_id'])->viaTable('link_url_rel', ['src_id' => 'id']);
 	}
 
-	public function getConfirmity($domain_id = null)
+	/**
+	 * Conformity relation
+	 * @return ActiveQueryInterface
+	 */
+	public function getConformities()
 	{
-		return $this->hasOne(Url::className(), ['id' => 'dest_id'])->viaTable('link_url_confirmity', ['src_id' => 'id'])->andWhere(['domain_id' => $domain_id]);
+		return $this->hasMany(Url::className(), ['id' => 'dest_id'])->viaTable('link_url_confirmity', ['src_id' => 'id']);
 	}
 
 }

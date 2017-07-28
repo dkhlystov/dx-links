@@ -1,10 +1,10 @@
 $(function() {
 
-	$(document).on('click', 'a.list-confirmity', confirmityClick);
-	$(document).on('click', '.confirmity-cancel', cancelClick);
-	$(document).on('click', '.confirmity-set', setClick);
+	$(document).on('click', 'a.conformity', conformityClick);
+	$(document).on('click', '.conformity-cancel', cancelClick);
+	$(document).on('click', '.conformity-set', setClick);
 
-	function confirmityClick(e) {
+	function conformityClick(e) {
 		e.preventDefault();
 
 		var $modal = $('.list-modal')

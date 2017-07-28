@@ -2,17 +2,17 @@
 
 use yii\grid\GridView;
 use yii\helpers\Html;
-use dx\links\assets\ConfirmityAsset;
+use dx\links\assets\ConformityAsset;
 use dx\links\models\Url;
 
 $title = 'Соответствие страниц';
 
 $this->params['breadcrumbs'] = [
-	['label' => 'Список доменов', 'url' => 'index'],
+	['label' => 'Список доменов', 'url' => ['index']],
 	$title,
 ];
 
-ConfirmityAsset::register($this);
+ConformityAsset::register($this);
 
 $urls = ['' => ''];
 foreach (Url::find()->select(['id', 'status', 'url', 'title'])->where(['domain_id' => $dest->id])->asArray()->all() as $row)
@@ -27,8 +27,12 @@ $view = $this;
 	<?= Html::checkbox(null, $unfinished, ['id' => 'conformity-unfinished', 'label' => 'Только необработанные']) ?>
 </p-->
 
+<p>
+	<?= Html::a('Сформировать .htaccess', ['htaccess', 'src_id' => $src->id, 'dest_id' => $dest->id], ['class' => 'btn btn-primary']) ?>
+</p>
+
 <?= GridView::widget([
-	'id' => 'list-confirmity',
+	'id' => 'conformity-list',
 	'dataProvider' => $dataProvider,
 	'columns' => [
 		//status, url, title
@@ -41,7 +45,7 @@ $view = $this;
 		[
 			'header' => $dest->getDomain(),
 			'content' => function($model, $key, $index, $column) use ($dest) {
-				$object = $model->getConfirmity($dest->id)->one();
+				$object = $model->getConformities()->andWhere(['domain_id' => $dest->id])->one();
 				if ($object === null)
 					return null;
 
@@ -54,7 +58,7 @@ $view = $this;
 			'template' => '{select}',
 			'buttons' => [
 				'select' => function($url, $model, $key) {
-					return Html::a(Html::tag('span', '', ['class' => 'glyphicon glyphicon-chevron-right']), '#', ['class' => 'list-confirmity']);
+					return Html::a(Html::tag('span', '', ['class' => 'glyphicon glyphicon-chevron-right']), '#', ['class' => 'conformity']);
 				},
 			],
 		],
@@ -68,8 +72,8 @@ $view = $this;
 				<?= Html::dropDownList(null, null, $urls, ['class' => 'form-control']) ?>
 			</div>
 			<div class="modal-footer">
-				<?= Html::button('Отмена', ['class' => 'btn btn-default confirmity-cancel']) ?>
-				<?= Html::a('Сохранить', ['conformity-set'], ['class' => 'btn btn-primary confirmity-set']) ?>
+				<?= Html::button('Отмена', ['class' => 'btn btn-default conformity-cancel']) ?>
+				<?= Html::a('Сохранить', ['conformity-set'], ['class' => 'btn btn-primary conformity-set']) ?>
 			</div>
 		</div>
 	</div>

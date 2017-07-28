@@ -154,14 +154,27 @@ class DomainController extends Controller
 
 		$old = $src->getConfirmity($dest->domain_id)->one();
 		if ($old !== null)
-			$src->unlink('confirmity', $old, true);
+			$src->unlink('conformity', $old, true);
 
-		$src->link('confirmity', $dest, ['domain_id' => $dest->domain_id]);
+		$src->link('conformity', $dest, ['domain_id' => $dest->domain_id]);
 
 		return Json::encode([
 			'success' => true,
 			'html' => $this->renderPartial('conformity/item', ['model' => $dest]),
 		]);
+	}
+
+	public function actionHtaccess($src_id, $dest_id, $domain = null)
+	{
+		$src = Domain::findOne($src_id);
+		if ($src === null)
+			throw new BadRequestHttpException('Объект не найден.');
+
+		$dest = Domain::findOne($dest_id);
+		if ($dest === null)
+			throw new BadRequestHttpException('Объект не найден.');
+
+		return $this->render('htaccess', ['src' => $src, 'dest' => $dest, 'domain' => $domain]);
 	}
 
 }

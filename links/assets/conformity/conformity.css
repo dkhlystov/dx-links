@@ -1,13 +1,13 @@
-#list-confirmity .list-container {
+#conformity-list .list-container {
 	height: 40px;
 	overflow: hidden;
 	position: relative;
 }
-#list-confirmity .list-container > div {
+#conformity-list .list-container > div {
 	position: absolute;
 	top: 0;
 	white-space: nowrap;
 }
-#list-confirmity .list-container .list-title {
+#conformity-list .list-container .list-title {
 	top: 20px;
 }
