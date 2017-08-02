@@ -152,11 +152,11 @@ class DomainController extends Controller
 		if ($dest === null)
 			throw new BadRequestHttpException('Объект не найден.');
 
-		$old = $src->getConfirmity($dest->domain_id)->one();
+		$old = $src->getConformities()->andWhere(['domain_id' => $dest->domain_id])->one();
 		if ($old !== null)
-			$src->unlink('conformity', $old, true);
+			$src->unlink('conformities', $old, true);
 
-		$src->link('conformity', $dest, ['domain_id' => $dest->domain_id]);
+		$src->link('conformities', $dest, ['domain_id' => $dest->domain_id]);
 
 		return Json::encode([
 			'success' => true,
